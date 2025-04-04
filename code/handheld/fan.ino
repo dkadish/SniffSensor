@@ -1,0 +1,6 @@
+void fanOn(){
+}
+
+void fanOff(){
+  
+}
