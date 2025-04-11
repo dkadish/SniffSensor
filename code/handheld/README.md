@@ -1,5 +1,13 @@
 # Installation
 
+## Dependencies
+* Chrono
+* Adafruit BME680 Library
+* SparkFun Qwiic Button and Qwiic Switch Library
+* ENS160 - Adafruit Fork
+* Adafruit ADS1X15
+* Adafruit LC709203F
+
 # Usage
 
 # Sensors

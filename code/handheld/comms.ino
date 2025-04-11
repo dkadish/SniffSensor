@@ -1,8 +1,8 @@
 #define CHIP_SELECT PA4
 
-void blink(bool onOff, int delayMs){
-    digitalWrite(LED_BUILTIN, onOff);
-    delay(delayMs);
+void blink(bool onOff, int delayMs) {
+  digitalWrite(LED_BUILTIN, onOff);
+  delay(delayMs);
 }
 
 void setupComms() {
@@ -20,16 +20,18 @@ void setupComms() {
     blink(false, 100);
   }
 
-  if(Serial){
+  if (Serial) {
     Serial.println("Serial port started.");
   }
 
+#if USE_SD
   if (!SD.begin(CHIP_SELECT)) {
-    if(Serial) Serial.println("Card failed, or not present");
+    if (Serial) Serial.println("Card failed, or not present");
     // don't do anything more:
   } else {
-    if(Serial) Serial.println("card initialized.");
+    if (Serial) Serial.println("card initialized.");
   }
+#endif
 
   Wire.begin();
   delay(100);

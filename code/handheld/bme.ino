@@ -32,7 +32,9 @@ Adafruit_BME680 bme;  // I2C
 //Adafruit_BME680 bme(BME_CS); // hardware SPI
 //Adafruit_BME680 bme(BME_CS, BME_MOSI, BME_MISO, BME_SCK);
 
+#if USE_SD
 File bmeFile;
+#endif
 bool bmeIsOpen = false;
 // unsigned long endTime = 0;
 
@@ -125,8 +127,9 @@ void bme688Loop(int sampleNumber) {
     endTime = 0;
     */
 
-  if(bme.performReading()){
+  if (bme.performReading()) {
 
+#if USE_SD
     bmeFile = SD.open(BME_FILE_NAME, FILE_WRITE);  // Create or open a file called "data.txt" on the SD card
     if (bmeFile) {
       printDate(bmeFile);
@@ -154,7 +157,9 @@ void bme688Loop(int sampleNumber) {
       if (Serial)
         Serial.println("error opening bme688.csv");
     }
+#endif
 
+#if PRINT_SERIAL_MESSAGES
     if (Serial) {
       Serial.print(F("Reading completed at "));
       Serial.println(millis());
@@ -181,5 +186,6 @@ void bme688Loop(int sampleNumber) {
 
       Serial.println();
     }
+#endif
   }
 }

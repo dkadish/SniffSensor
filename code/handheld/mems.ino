@@ -6,12 +6,15 @@
 
 // ADC for MEMS sensors
 Adafruit_ADS1015 ads1, ads2;  // Construct an ads101
+
+#if USE_SD
 File memsFile;
+#endif
 
 void setupMEMS() {
-  #if USE_SERIAL
+#if USE_SERIAL
   Serial.println("Starting MEMS Sensors");
-  #endif
+#endif
 
   ads1.begin();
   ads2.begin(0x49);
@@ -42,7 +45,7 @@ void readMEMS(int sampleNumber) {
   no2Volt = ads2.computeVolts(no2);
   nh3Volt = ads2.computeVolts(nh3);
 
-
+#if USE_SD
   memsFile = SD.open(MEMS_FILE_NAME, FILE_WRITE);  // Create or open a file called "data.txt" on the SD card
   if (memsFile) {
     printDate(memsFile);
@@ -73,6 +76,7 @@ void readMEMS(int sampleNumber) {
     memsFile.close();  // Close the file to properly save the data
   } else {
   }
+#endif
 
 #if PRINT_SERIAL_MESSAGES
   if (Serial) {

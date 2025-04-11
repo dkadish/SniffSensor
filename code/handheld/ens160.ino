@@ -15,7 +15,10 @@
 #include "ScioSense_ENS160.h"  // ENS160 library
 //ScioSense_ENS160      ens160(ENS160_I2CADDR_0);
 ScioSense_ENS160 ens160(ENS160_I2CADDR_1);
+
+#if USE_SD
 File ensFile;
+#endif
 
 /*--------------------------------------------------------------------------
   SETUP function
@@ -64,6 +67,7 @@ void ens160Loop(int sampleNumber) {
     ens160.measure(true);
     ens160.measureRaw(true);
 
+#if USE_SD
     ensFile = SD.open(ENS_FILE_NAME, FILE_WRITE);  // Create or open a file called "data.txt" on the SD card
     if (ensFile) {
       printDate(ensFile);
@@ -95,5 +99,6 @@ void ens160Loop(int sampleNumber) {
       if (Serial)
         Serial.println("error opening ens160.csv");
     }
+#endif
   }
 }

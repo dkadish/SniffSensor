@@ -20,6 +20,7 @@ https://github.com/stm32duino/STM32LowPower
 #define USE_BUTTON 1
 #define USE_BATTERYMONITOR 0
 #define USE_DISPLAY 0
+#define USE_SD 0
 
 #include <SPI.h>
 #include <SD.h>
