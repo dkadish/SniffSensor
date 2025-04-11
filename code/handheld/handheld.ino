@@ -4,15 +4,81 @@ TODO:
 https://github.com/stm32duino/STM32LowPower
 */
 
-#define READING_INTERVAL 10000L
+
 #define MEMS_FILE_NAME "mems.csv"
 #define BME_FILE_NAME "bme.csv"
 #define ENS_FILE_NAME "ens.csv"
+
+#define READING_INTERVAL 1000L
+#define WAIT_LED_DELAY 1000
+
+#define PRINT_SERIAL_MESSAGES 1
+#define ACCEPT_COMMANDS 0
+#define USE_SERIAL 1
+#define USE_MEMS 1
+#define USE_BME 0
+#define USE_BUTTON 1
+#define USE_BATTERYMONITOR 0
+#define USE_DISPLAY 0
 
 #include <SPI.h>
 #include <SD.h>
 #include <Chrono.h>
 #include <STM32RTC.h>
+
+/*********************************************************/
+
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+#define SCREEN_WIDTH 128  // OLED display width, in pixels
+#define SCREEN_HEIGHT 64  // OLED display height, in pixels
+
+class OLEDDisplay {
+private:
+  Adafruit_SSD1306 m_display;  //(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
+  int m_width;
+  int m_height;
+  int m_addr;
+  int m_batteryLevel = 0;
+
+public:
+  OLEDDisplay(int width, int height, int addr)
+    : m_display(width, height, &Wire, -1), m_width(width), m_height(height), m_addr(addr) {}
+
+  void setup();
+
+  void setBattery(int level);
+
+  void update();
+};
+
+void OLEDDisplay::setup() {
+  if (!m_display.begin(SSD1306_SWITCHCAPVCC, m_addr)) {
+    Serial.println(F("SSD1306 allocation failed"));
+  }
+}
+
+void OLEDDisplay::setBattery(int level) {
+  m_batteryLevel = level;
+}
+
+void OLEDDisplay::update() {
+  Serial.println("Updating display");
+  m_display.clearDisplay();
+
+  m_display.setTextSize(2);  // Draw 2X-scale text
+  m_display.setTextColor(SSD1306_WHITE);
+  m_display.setCursor(10, 0);
+  m_display.println(F("HI!"));
+  m_display.setCursor(20, 0);
+  m_display.println(m_batteryLevel);
+  m_display.display();  // Show initial text
+}
+
+/*********************************************************/
 
 STM32RTC& rtc = STM32RTC::getInstance();
 void setupRTC() {
@@ -42,7 +108,9 @@ void printDigits(File& file, int digits) {
 
 Chrono readingChrono;
 
-#define WAIT_LED_DELAY 1000
+#if USE_DISPLAY
+OLEDDisplay display(128, 64, 0x3D);
+#endif
 
 // #include <STM32RTC.h>
 // #include <TimeLib.h>
@@ -52,34 +120,31 @@ Chrono readingChrono;
 
 void read() {
 
-  // Check to see if button has been pressed and record.
+// Check to see if button has been pressed and record.
+#if USE_BUTTON
   loopButton();
+#endif
 
   if (readingChrono.hasPassed(READING_INTERVAL)) {
 
     digitalWrite(LED_BUILTIN, HIGH);
-    // Take readings from all sensors.
+// Take readings from all sensors.
+#if USE_MEMS
     readMEMS(getClicks());
-    // delay(100);
-    // digitalWrite(LED_BUILTIN, LOW);
-    // buttonBlink(1);
-    // digitalWrite(LED_BUILTIN, HIGH);
+#endif
+
+#if USE_BME
     bme688Loop(getClicks());
-    // delay(100);
-    // digitalWrite(LED_BUILTIN, LOW);
-    // buttonBlink(2);
-    // digitalWrite(LED_BUILTIN, HIGH);
-    //TODO: THIS IS THE PROBLEM. THERE IS AN ISSUE WITH THE ENS CODE.
-    // ens160Loop(getClicks());
-    // delay(100);
-    digitalWrite(LED_BUILTIN, LOW);
-    // delay(100);
+#endif
 
-    // buttonBlink(5);
-
+#if USE_BATTERYMONITOR
+    loopBattery();
+#endif
     // Restart the timer
     readingChrono.restart();
+    digitalWrite(LED_BUILTIN, HIGH);
   }
+
 }
 
 void printFileOverSerial(File& file) {
@@ -97,7 +162,7 @@ void printFileOverSerial(File& file) {
 }
 
 void serialCommands() {
-  if(!Serial){
+  if (!Serial) {
     return;
   }
 
@@ -125,6 +190,10 @@ void serialCommands() {
 
 
 void setup() {
+
+#if USE_SERIAL
+  Serial.println("Starting Setup");
+#endif
   //Start communication
   setupComms();
 
@@ -134,13 +203,28 @@ void setup() {
   delay(5000);
   digitalWrite(LED_BUILTIN, LOW);
 
+#if USE_BUTTON
   setupButton();
+#endif
 
+#if USE_MEMS
   setupMEMS();
+#endif
 
+#if USE_BME
   bme688Setup();
+#endif
 
   // ens160Setup();
+
+
+#if USE_BATTERYMONITOR
+    setupBattery();
+#endif
+
+#if USE_DISPLAY
+  display.setup();
+#endif
 
   for (int i = 0; i < 3; i++) {
     digitalWrite(LED_BUILTIN, HIGH);
@@ -148,10 +232,20 @@ void setup() {
     digitalWrite(LED_BUILTIN, LOW);
     delay(1000);
   }
+#if USE_SERIAL
+  Serial.println("Finished Setup.");
+#endif
 }
 
 void loop() {
   // Run the reading loop
   read();
+
+#if USE_DISPLAY
+  display.update();
+#endif
+
+#if ACCEPT_COMMANDS
   serialCommands();
+#endif
 }

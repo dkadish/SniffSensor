@@ -9,6 +9,10 @@ Adafruit_ADS1015 ads1, ads2;  // Construct an ads101
 File memsFile;
 
 void setupMEMS() {
+  #if USE_SERIAL
+  Serial.println("Starting MEMS Sensors");
+  #endif
+
   ads1.begin();
   ads2.begin(0x49);
 }
@@ -67,10 +71,32 @@ void readMEMS(int sampleNumber) {
     memsFile.println();
 
     memsFile.close();  // Close the file to properly save the data
-  } 
-  else {
-    // if the file didn't open, print an error:
-    if(Serial)
-      Serial.println("error opening mems.csv");
+  } else {
   }
+
+#if PRINT_SERIAL_MESSAGES
+  if (Serial) {
+    //Sample Nuber
+    Serial.print(sampleNumber);
+
+    Serial.print(",");
+    Serial.print(hchoVolt);
+    Serial.print(",");
+    Serial.print(ch4Volt);
+    Serial.print(",");
+    Serial.print(vocVolt);
+    Serial.print(",");
+    Serial.print(odorVolt);
+    Serial.print(",");
+    Serial.print(etohVolt);
+    Serial.print(",");
+    Serial.print(h2sVolt);
+    Serial.print(",");
+    Serial.print(no2Volt);
+    Serial.print(",");
+    Serial.print(nh3Volt);
+
+    Serial.println();
+  }
+#endif
 }
