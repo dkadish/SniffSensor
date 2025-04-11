@@ -7,6 +7,7 @@ Digital olfactory sensor (e-nose) development repo
 ## Set up the Arduino IDE
 1. Add the required JSON file to the Additional Boards Files in the Arduino IDE (see hookup guide)
 1. Install the board definitions for the STM32duino STM32 Arduino Core.
+1. Install the latest version of the STM32Cube IDE (https://www.st.com/en/development-tools/stm32cubeide.html)
 
 ## Download the latest version of the code
 You should probably use the develop branch for now.
