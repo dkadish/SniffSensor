@@ -13,19 +13,27 @@ https://github.com/stm32duino/STM32LowPower
 #define WAIT_LED_DELAY 1000
 
 #define PRINT_SERIAL_MESSAGES 1
-#define ACCEPT_COMMANDS 0
+#define ACCEPT_COMMANDS 1
 #define USE_SERIAL 1
 #define USE_MEMS 1
 #define USE_BME 0
+
 #define USE_BUTTON 1
 #define USE_BATTERYMONITOR 0
 #define USE_DISPLAY 0
-#define USE_SD 0
+#define USE_SD 1
+#define USE_DATE 0
 
+#define USE_STM 0
+#define USE_ESP 1
+ 
 #include <SPI.h>
 #include <SD.h>
 #include <Chrono.h>
+
+#if USE_STM
 #include <STM32RTC.h>
+#endif
 
 /*********************************************************/
 
@@ -81,6 +89,7 @@ void OLEDDisplay::update() {
 
 /*********************************************************/
 
+#if USE_STM
 STM32RTC& rtc = STM32RTC::getInstance();
 void setupRTC() {
   rtc.begin();
@@ -99,6 +108,7 @@ void printDate(File& file) {
   file.print(":");
   printDigits(file, rtc.getSeconds());
 }
+#endif
 
 void printDigits(File& file, int digits) {
   if (digits < 10) {
@@ -191,14 +201,12 @@ void serialCommands() {
 
 
 void setup() {
+//Start communication
+setupComms();
 
-#if USE_SERIAL
-  Serial.println("Starting Setup");
-#endif
-  //Start communication
-  setupComms();
-
+#if USE_STM
   setupRTC();
+#endif
 
   digitalWrite(LED_BUILTIN, HIGH);
   delay(5000);

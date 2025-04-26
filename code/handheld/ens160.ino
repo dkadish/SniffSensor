@@ -70,10 +70,12 @@ void ens160Loop(int sampleNumber) {
 #if USE_SD
     ensFile = SD.open(ENS_FILE_NAME, FILE_WRITE);  // Create or open a file called "data.txt" on the SD card
     if (ensFile) {
+      #if USE_DATE
       printDate(ensFile);
-
       //Sample Number
       ensFile.print("\t");
+      #endif
+
       ensFile.print(sampleNumber);
 
       ensFile.print("\t");

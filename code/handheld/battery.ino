@@ -13,7 +13,7 @@ void setupBattery() {
 
   lc.setTemperatureMode(LC709203F_TEMPERATURE_I2C);
 
-  lc.setPackSize(LC709203F_APA_2000MAH);
+  lc.setPackSize(LC709203F_APA_3000MAH);
 
   lc.setAlarmVoltage(3.8);
 }

@@ -1,7 +1,9 @@
 #include <SPI.h>
 #include <SD.h>
 #include <Wire.h>
+#if USE_STM
 #include <STM32RTC.h>
+#endif
 #include <Adafruit_ADS1X15.h>
 
 // ADC for MEMS sensors
@@ -48,10 +50,12 @@ void readMEMS(int sampleNumber) {
 #if USE_SD
   memsFile = SD.open(MEMS_FILE_NAME, FILE_WRITE);  // Create or open a file called "data.txt" on the SD card
   if (memsFile) {
+#if USE_DATE
     printDate(memsFile);
-
     //Sample Nuber
     memsFile.print("\t");
+#endif
+
     memsFile.print(sampleNumber);
 
     memsFile.print("\t");

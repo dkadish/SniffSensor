@@ -11,7 +11,7 @@ bool ledOn = false;
 
 void setupButton() {
   if (button.begin() == false) {
-    Serial.println("Device did not acknowledge! Freezing.");
+    Serial.println("Qwiic Button did not acknowledge! Freezing.");
     while (1)
       ;
   }

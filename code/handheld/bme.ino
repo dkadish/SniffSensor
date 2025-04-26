@@ -132,10 +132,12 @@ void bme688Loop(int sampleNumber) {
 #if USE_SD
     bmeFile = SD.open(BME_FILE_NAME, FILE_WRITE);  // Create or open a file called "data.txt" on the SD card
     if (bmeFile) {
+      #if USE_DATE
       printDate(bmeFile);
-
       //Sample Number
       bmeFile.print("\t");
+      #endif
+      
       bmeFile.print(sampleNumber);
 
       bmeFile.print("\t");
