@@ -1,5 +1,6 @@
 #include <Chrono.h>
 #include <SparkFun_Qwiic_Button.h>
+#include <Preferences.h>
 
 // Button and LED
 QwiicButton button;
@@ -9,12 +10,18 @@ bool doBlink = false;
 Chrono ledChrono;
 bool ledOn = false;
 
+Preferences preferences;
+
 void setupButton() {
   if (button.begin() == false) {
     Serial.println("Qwiic Button did not acknowledge! Freezing.");
     // while (1)
     //   ;
   }
+
+  preferences.begin("smell", false);
+
+  nClicks = preferences.getInt("clicks", 0);
 
   buttonBlink(3);
   
@@ -27,6 +34,7 @@ void loopButton() {
 
     // Register Click
     nClicks += 1;
+    preferences.putInt("clicks", nClicks);
   }
 
   if(doBlink && ledChrono.hasPassed(WAIT_LED_DELAY)){

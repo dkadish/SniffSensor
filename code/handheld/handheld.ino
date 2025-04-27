@@ -5,16 +5,13 @@ https://github.com/stm32duino/STM32LowPower
 */
 
 
-#define MEMS_FILE_NAME "mems.csv"
-#define BME_FILE_NAME "bme.csv"
-#define ENS_FILE_NAME "ens.csv"
 
 #define READING_INTERVAL 1000L
 #define WAIT_LED_DELAY 1000
 
-#define PRINT_SERIAL_MESSAGES 1
-#define ACCEPT_COMMANDS 1
 #define USE_SERIAL 0
+#define PRINT_SERIAL_MESSAGES 0
+#define ACCEPT_COMMANDS 0
 #define USE_MEMS 1
 #define USE_BME 0
 
@@ -26,6 +23,18 @@ https://github.com/stm32duino/STM32LowPower
 
 #define USE_STM 0
 #define USE_ESP 1
+
+#if USE_STM
+  #define MEMS_FILE_NAME "mems.csv"
+  #define BME_FILE_NAME "bme.csv"
+  #define ENS_FILE_NAME "ens.csv"
+  #define WRITE_MODE FILE_WRTIE
+#else
+  #define MEMS_FILE_NAME "/mems.csv"
+  #define BME_FILE_NAME "/bme.csv"
+  #define ENS_FILE_NAME "/ens.csv"
+  #define WRITE_MODE FILE_APPEND
+#endif
  
 #include <SPI.h>
 #include <SD.h>

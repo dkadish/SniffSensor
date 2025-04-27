@@ -68,12 +68,16 @@ void ens160Loop(int sampleNumber) {
     ens160.measureRaw(true);
 
 #if USE_SD
-    ensFile = SD.open(ENS_FILE_NAME, FILE_WRITE);  // Create or open a file called "data.txt" on the SD card
+    ensFile = SD.open(ENS_FILE_NAME, WRITE_MODE);  // Create or open a file called "data.txt" on the SD card
     if (ensFile) {
       #if USE_DATE
       printDate(ensFile);
       //Sample Number
       ensFile.print("\t");
+    #else
+        ensFile.print(millis());
+        //Sample Nuber
+        ensFile.print("\t");
       #endif
 
       ensFile.print(sampleNumber);

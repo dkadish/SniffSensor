@@ -70,7 +70,7 @@ void drawPower(float cellVoltage, float cellPercent, int sampleNumber) {
   } else {
     canvas.setCursor(0, 0);
     canvas.setTextSize(2);
-    canvas.print("SAMPLE: ");
+    canvas.print("Sample ");
     canvas.print(sampleNumber);
     canvas.setTextSize(1);
   }
