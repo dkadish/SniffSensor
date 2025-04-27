@@ -20,3 +20,4 @@
 | Button | 0x6F        |
 | MEMS1  | 0x48        |
 | MEMS2  | 0x49 (?)    |
+| LC709203F  | 0x0B    |

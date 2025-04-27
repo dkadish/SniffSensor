@@ -14,13 +14,13 @@ https://github.com/stm32duino/STM32LowPower
 
 #define PRINT_SERIAL_MESSAGES 1
 #define ACCEPT_COMMANDS 1
-#define USE_SERIAL 1
+#define USE_SERIAL 0
 #define USE_MEMS 1
 #define USE_BME 0
 
 #define USE_BUTTON 1
-#define USE_BATTERYMONITOR 0
-#define USE_DISPLAY 0
+#define USE_BATTERYMONITOR 1
+#define USE_DISPLAY 1
 #define USE_SD 1
 #define USE_DATE 0
 
@@ -35,59 +35,59 @@ https://github.com/stm32duino/STM32LowPower
 #include <STM32RTC.h>
 #endif
 
-/*********************************************************/
+// /*********************************************************/
 
-#include <Wire.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
+// #include <Wire.h>
+// #include <Adafruit_GFX.h>
+// #include <Adafruit_SSD1306.h>
 
-#define SCREEN_WIDTH 128  // OLED display width, in pixels
-#define SCREEN_HEIGHT 64  // OLED display height, in pixels
+// #define SCREEN_WIDTH 128  // OLED display width, in pixels
+// #define SCREEN_HEIGHT 64  // OLED display height, in pixels
 
-class OLEDDisplay {
-private:
-  Adafruit_SSD1306 m_display;  //(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+// class OLEDDisplay {
+// private:
+//   Adafruit_SSD1306 m_display;  //(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-  int m_width;
-  int m_height;
-  int m_addr;
-  int m_batteryLevel = 0;
+//   int m_width;
+//   int m_height;
+//   int m_addr;
+//   int m_batteryLevel = 0;
 
-public:
-  OLEDDisplay(int width, int height, int addr)
-    : m_display(width, height, &Wire, -1), m_width(width), m_height(height), m_addr(addr) {}
+// public:
+//   OLEDDisplay(int width, int height, int addr)
+//     : m_display(width, height, &Wire, -1), m_width(width), m_height(height), m_addr(addr) {}
 
-  void setup();
+//   void setup();
 
-  void setBattery(int level);
+//   void setBattery(int level);
 
-  void update();
-};
+//   void update();
+// };
 
-void OLEDDisplay::setup() {
-  if (!m_display.begin(SSD1306_SWITCHCAPVCC, m_addr)) {
-    Serial.println(F("SSD1306 allocation failed"));
-  }
-}
+// void OLEDDisplay::setup() {
+//   if (!m_display.begin(SSD1306_SWITCHCAPVCC, m_addr)) {
+//     Serial.println(F("SSD1306 allocation failed"));
+//   }
+// }
 
-void OLEDDisplay::setBattery(int level) {
-  m_batteryLevel = level;
-}
+// void OLEDDisplay::setBattery(int level) {
+//   m_batteryLevel = level;
+// }
 
-void OLEDDisplay::update() {
-  Serial.println("Updating display");
-  m_display.clearDisplay();
+// void OLEDDisplay::update() {
+//   Serial.println("Updating display");
+//   m_display.clearDisplay();
 
-  m_display.setTextSize(2);  // Draw 2X-scale text
-  m_display.setTextColor(SSD1306_WHITE);
-  m_display.setCursor(10, 0);
-  m_display.println(F("HI!"));
-  m_display.setCursor(20, 0);
-  m_display.println(m_batteryLevel);
-  m_display.display();  // Show initial text
-}
+//   m_display.setTextSize(2);  // Draw 2X-scale text
+//   m_display.setTextColor(SSD1306_WHITE);
+//   m_display.setCursor(10, 0);
+//   m_display.println(F("HI!"));
+//   m_display.setCursor(20, 0);
+//   m_display.println(m_batteryLevel);
+//   m_display.display();  // Show initial text
+// }
 
-/*********************************************************/
+// /*********************************************************/
 
 #if USE_STM
 STM32RTC& rtc = STM32RTC::getInstance();
@@ -119,7 +119,7 @@ void printDigits(File& file, int digits) {
 
 Chrono readingChrono;
 
-#if USE_DISPLAY
+#if USE_DISPLAY1
 OLEDDisplay display(128, 64, 0x3D);
 #endif
 
@@ -149,7 +149,7 @@ void read() {
 #endif
 
 #if USE_BATTERYMONITOR
-    loopBattery();
+    loopBattery(getClicks());
 #endif
     // Restart the timer
     readingChrono.restart();
@@ -231,7 +231,7 @@ setupComms();
     setupBattery();
 #endif
 
-#if USE_DISPLAY
+#if USE_DISPLAY1
   display.setup();
 #endif
 
@@ -250,7 +250,7 @@ void loop() {
   // Run the reading loop
   read();
 
-#if USE_DISPLAY
+#if USE_DISPLAY1
   display.update();
 #endif
 

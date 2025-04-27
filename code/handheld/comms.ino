@@ -12,11 +12,12 @@ void blink(bool onOff, int delayMs) {
 void setupComms() {
   pinMode(LED_BUILTIN, OUTPUT);
 
+Wire.setClock(10000);
 
 #if USE_SERIAL
   for (int i = 0; i < 10; i++) {
     if (Serial) break;
-    Serial.begin(9600);
+    Serial.begin(115200);
     blink(true, 250);
     blink(false, 250);
   }
